@@ -1,3 +1,3 @@
 # Cereal
 
-A package to simply serialization management in php classes.
+A package to simplify serialization management in php classes.
