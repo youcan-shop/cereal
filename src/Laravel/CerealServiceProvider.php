@@ -9,7 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
 use YouCanShop\Cereal\SerializationHandlerFactory;
 
-final class CerealServiceProvider extends ServiceProvider
+class CerealServiceProvider extends ServiceProvider
 {
     /**
      * @throws Exception
