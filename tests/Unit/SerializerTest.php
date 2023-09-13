@@ -1,44 +1,23 @@
 <?php
 
-use YouCan\Cereal\Contracts\SerializationHandler;
-use YouCan\Cereal\Contracts\SerializationHandlerFactory;
+namespace Tests;
+
+use Tests\Components\SerializationHandlerFactory;
+use YouCan\Cereal\Contracts\Serializable;
 use YouCan\Cereal\Serializer;
 
 it('serializes', function () {
-    $factory = new class implements SerializationHandlerFactory {
-        public function getHandler(ReflectionProperty $property): SerializationHandler
-        {
-            $type = $property->getType();
-            if (!$type instanceof ReflectionType) {
-                throw new InvalidArgumentException('untyped property');
-            }
-
-            if ($type->__toString() === 'string') {
-                return new class implements SerializationHandler {
-                    public function serialize($value)
-                    {
-                        return $value;
-                    }
-
-                    public function deserialize($value)
-                    {
-                        return $value;
-                    }
-                };
-            }
-
-            throw new Exception('non exhaustive handling of types');
-        }
-    };
-
-    class A implements \YouCan\Cereal\Contracts\Serializable
+    class A implements Serializable
     {
         private Serializer $serializer;
         public string $property = 'hello';
 
-        public function __construct($factory)
+        public function __construct()
         {
-            $this->serializer = new Serializer($factory, $this);
+            $this->serializer = new Serializer(
+                new SerializationHandlerFactory(),
+                $this
+            );
         }
 
         public function serializes(): array
@@ -52,8 +31,5 @@ it('serializes', function () {
         }
     }
 
-    $a = new A($factory);
-
-    serialize($a);
-
+    $a = new A();
 });
