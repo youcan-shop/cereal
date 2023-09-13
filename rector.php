@@ -12,6 +12,14 @@ use Rector\Set\ValueObject\SetList;
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([__DIR__ . '/src',]);
 
+    $rectorConfig->rules(
+        [
+            PrivatizeLocalGetterToPropertyRector::class,
+            PrivatizeFinalClassPropertyRector::class,
+            PrivatizeFinalClassMethodRector::class,
+        ]
+    );
+
     $rectorConfig->sets(
         [
             LevelSetList::UP_TO_PHP_74,
@@ -19,14 +27,6 @@ return static function (RectorConfig $rectorConfig): void {
             SetList::DEAD_CODE,
             SetList::EARLY_RETURN,
             SetList::TYPE_DECLARATION,
-        ]
-    );
-
-    $rectorConfig->rules(
-        [
-            PrivatizeLocalGetterToPropertyRector::class,
-            PrivatizeFinalClassPropertyRector::class,
-            PrivatizeFinalClassMethodRector::class,
         ]
     );
 };
