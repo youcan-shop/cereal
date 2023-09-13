@@ -27,7 +27,7 @@ it('serializes scalar types', function () {
 
         public function serializes(): array
         {
-            return ['fullname', 'age', 'weight', 'isStraight'];
+            return ['name', 'age', 'weight', 'isStraight'];
         }
     }
 
@@ -35,7 +35,7 @@ it('serializes scalar types', function () {
     $serializedUser = serialize($user);
     $deserializedUser = unserialize($serializedUser);
 
-    expect($deserializedUser->fullname)->toBe($user->name);
+    expect($deserializedUser->name)->toBe($user->name);
     expect($deserializedUser->age)->toBe($user->age);
     expect($deserializedUser->weight)->toBe($user->weight);
     expect($deserializedUser->isStraight)->toBe($user->isStraight);
@@ -100,10 +100,28 @@ it('serializes classes', function () {
     SerializationHandlerFactory::getInstance()
         ->addHandler(Something::class, $handler);
 
-    $thing = $lookupTable['1'];
-    $serialized = serialize($thing);
+    class Wrapper implements Serializable
+    {
+        use SerializeTrait;
+
+        public Something $thing;
+
+        public function __construct(Something $thing)
+        {
+            $this->thing = $thing;
+        }
+
+        public function serializes(): array
+        {
+            return ['thing'];
+        }
+    }
+
+    $wrapper = new Wrapper($lookupTable['1']);
+
+    $serialized = serialize($wrapper);
     $deserialized = unserialize($serialized);
 
-    expect($deserialized->getId())
-        ->toEqual($thing->getId());
+    expect($deserialized->thing->getId())
+        ->toEqual($wrapper->thing->getId());
 });
