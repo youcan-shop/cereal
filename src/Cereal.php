@@ -1,8 +1,8 @@
 <?php
 
-namespace YouCan\Cereal;
+namespace YouCanShop\Cereal;
 
-use YouCan\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\Contracts\Serializable;
 
 /**
  * @mixin Serializable

@@ -1,10 +1,10 @@
 <?php
 
-namespace YouCan\Cereal\Laravel;
+namespace YouCanShop\Cereal\Laravel;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
-use YouCan\Cereal\Contracts\SerializationHandler;
+use YouCanShop\Cereal\Contracts\SerializationHandler;
 
 final class ModelSerializationHandler implements SerializationHandler
 {

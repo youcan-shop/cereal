@@ -1,13 +1,13 @@
 <?php
 
-namespace YouCan\Cereal\Laravel;
+namespace YouCanShop\Cereal\Laravel;
 
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
-use YouCan\Cereal\SerializationHandlerFactory;
+use YouCanShop\Cereal\SerializationHandlerFactory;
 
 final class CerealServiceProvider extends ServiceProvider
 {
