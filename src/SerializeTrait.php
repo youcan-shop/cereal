@@ -1,6 +1,6 @@
 <?php
 
-namespace YouCan\Cereal;
+namespace YouCanShop\Cereal;
 
 trait SerializeTrait
 {

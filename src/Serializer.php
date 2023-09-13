@@ -1,12 +1,11 @@
 <?php
 
-namespace YouCan\Cereal;
+namespace YouCanShop\Cereal;
 
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
-use ReflectionType;
-use YouCan\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\Contracts\Serializable;
 
 final class Serializer
 {

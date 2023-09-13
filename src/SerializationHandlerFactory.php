@@ -1,8 +1,8 @@
 <?php
 
-namespace YouCan\Cereal;
+namespace YouCanShop\Cereal;
 
-use YouCan\Cereal\Contracts\SerializationHandler;
+use YouCanShop\Cereal\Contracts\SerializationHandler;
 
 final class SerializationHandlerFactory implements Contracts\SerializationHandlerFactory
 {

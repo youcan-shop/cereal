@@ -2,10 +2,10 @@
 
 namespace Tests;
 
-use YouCan\Cereal\Contracts\Serializable;
-use YouCan\Cereal\Contracts\SerializationHandler;
-use YouCan\Cereal\SerializationHandlerFactory;
-use YouCan\Cereal\SerializeTrait;
+use YouCanShop\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\Contracts\SerializationHandler;
+use YouCanShop\Cereal\SerializationHandlerFactory;
+use YouCanShop\Cereal\SerializeTrait;
 
 it('serializes scalar types', function () {
     class User implements Serializable

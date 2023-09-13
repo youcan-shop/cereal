@@ -1,6 +1,6 @@
 <?php
 
-namespace YouCan\Cereal\Contracts;
+namespace YouCanShop\Cereal\Contracts;
 
 interface SerializationHandler
 {
