@@ -4,6 +4,8 @@ namespace YouCan\Cereal;
 
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionType;
 use YouCan\Cereal\Contracts\Serializable;
 
 final class Serializer
@@ -18,7 +20,8 @@ final class Serializer
      */
     private array $serializations = [];
 
-    public function __construct(Serializable $serializable) {
+    public function __construct(Serializable $serializable)
+    {
         $this->serializable = $serializable;
     }
 
@@ -39,16 +42,18 @@ final class Serializer
     private function serialize(): void
     {
         foreach ($this->serializable->serializes() as $propertyName) {
-            $property = $this->reflect()
-                ->getProperty($propertyName);
+            $type = $this->reflect()
+                ->getProperty($propertyName)
+                ->getType();
 
-            if ($property->getType()->isBuiltin()) {
+            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 $this->serializations[$propertyName] = $this->serializable->$propertyName;
+
                 continue;
             }
 
             $this->serializations[$propertyName] = $this->getSerializationHandlerFactory()
-                ->getHandler($property->getType()->getName())
+                ->getHandler($type->getName())
                 ->serialize($this->serializable->$propertyName);
         }
     }
@@ -59,6 +64,11 @@ final class Serializer
     private function reflect(): ReflectionClass
     {
         return new ReflectionClass($this->serializable);
+    }
+
+    public function getSerializationHandlerFactory(): SerializationHandlerFactory
+    {
+        return SerializationHandlerFactory::getInstance();
     }
 
     /**
@@ -75,11 +85,12 @@ final class Serializer
     public function deserialize(): void
     {
         foreach ($this->serializable->serializes() as $propertyName) {
-            $property = $this
+            $type = $this
                 ->reflect()
-                ->getProperty($propertyName);
+                ->getProperty($propertyName)
+                ->getType();
 
-            if ($property->getType()->isBuiltin()) {
+            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
                 $this->serializable->$propertyName = $this->serializations[$propertyName];
                 continue;
             }
@@ -87,13 +98,8 @@ final class Serializer
             $serialized = $this->serializations[$propertyName];
 
             $this->serializable->$propertyName = $this->getSerializationHandlerFactory()
-                ->getHandler($property->getType()->getName())
+                ->getHandler($type->getName())
                 ->deserialize($serialized);
         }
-    }
-
-    public function getSerializationHandlerFactory(): SerializationHandlerFactory
-    {
-        return SerializationHandlerFactory::getInstance();
     }
 }
