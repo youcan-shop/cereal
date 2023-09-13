@@ -5,12 +5,12 @@ namespace Tests;
 use YouCanShop\Cereal\Contracts\Serializable;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
 use YouCanShop\Cereal\SerializationHandlerFactory;
-use YouCanShop\Cereal\SerializeTrait;
+use YouCanShop\Cereal\Cerealizes;
 
 it('serializes scalar types', function () {
     class User implements Serializable
     {
-        use SerializeTrait;
+        use Cerealizes;
 
         public string $name;
         public int $age;
@@ -102,7 +102,7 @@ it('serializes classes', function () {
 
     class Wrapper implements Serializable
     {
-        use SerializeTrait;
+        use Cerealizes;
 
         public Something $thing;
 

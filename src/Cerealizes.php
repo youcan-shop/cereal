@@ -2,7 +2,7 @@
 
 namespace YouCanShop\Cereal;
 
-trait SerializeTrait
+trait Cerealizes
 {
     private Serializer $serializer;
 
