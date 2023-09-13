@@ -7,7 +7,6 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
-use YouCan\Cereal\Contracts\SerializationHandlerFactory as HandlerFactoryContract;
 use YouCan\Cereal\SerializationHandlerFactory;
 
 final class CerealServiceProvider extends ServiceProvider
@@ -28,7 +27,7 @@ final class CerealServiceProvider extends ServiceProvider
         $handlerFactory = SerializationHandlerFactory::getInstance();
 
         $this->app->bind(
-            HandlerFactoryContract::class,
+            SerializationHandlerFactory::class,
             fn(): SerializationHandlerFactory => $handlerFactory
         );
 

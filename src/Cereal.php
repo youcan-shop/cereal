@@ -1,0 +1,27 @@
+<?php
+
+namespace YouCan\Cereal;
+
+use YouCan\Cereal\Contracts\Serializable;
+
+/**
+ * @mixin Serializable
+ */
+trait Cereal
+{
+    private Serializer $serializer;
+
+    public function __serialize(): array
+    {
+        /** @var Serializable $this */
+
+        return [
+            $this->getSerializerPropertyName() => new Serializer($this),
+        ];
+    }
+
+    public function getSerializerPropertyName(): string
+    {
+        return 'serializer';
+    }
+}

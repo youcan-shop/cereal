@@ -3,8 +3,9 @@
 namespace YouCanShop\Cereal;
 
 use YouCanShop\Cereal\Contracts\SerializationHandler;
+use InvalidArgumentException;
 
-final class SerializationHandlerFactory implements Contracts\SerializationHandlerFactory
+final class SerializationHandlerFactory
 {
     private static ?self $instance = null;
 
@@ -27,7 +28,7 @@ final class SerializationHandlerFactory implements Contracts\SerializationHandle
     public function getHandler(string $type): SerializationHandler
     {
         if (!isset($this->handlers[$type])) {
-            throw new \InvalidArgumentException(sprintf('cannot find handler for type "%s"', $type));
+            throw new InvalidArgumentException(sprintf('cannot find handler for type "%s"', $type));
         }
 
         return $this->handlers[$type];
