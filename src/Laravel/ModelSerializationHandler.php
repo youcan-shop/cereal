@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
 use YouCan\Cereal\Contracts\SerializationHandler;
 
-class ModelSerializationHandler implements SerializationHandler
+final class ModelSerializationHandler implements SerializationHandler
 {
     use SerializesAndRestoresModelIdentifiers;
 

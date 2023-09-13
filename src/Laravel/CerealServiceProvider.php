@@ -10,10 +10,9 @@ use InvalidArgumentException;
 use YouCan\Cereal\Contracts\SerializationHandlerFactory as HandlerFactoryContract;
 use YouCan\Cereal\SerializationHandlerFactory;
 
-class CerealServiceProvider extends ServiceProvider
+final class CerealServiceProvider extends ServiceProvider
 {
     /**
-     * @return void
      * @throws Exception
      */
     public function boot(): void
@@ -30,7 +29,7 @@ class CerealServiceProvider extends ServiceProvider
 
         $this->app->bind(
             HandlerFactoryContract::class,
-            fn() => $handlerFactory
+            fn(): SerializationHandlerFactory => $handlerFactory
         );
 
         $handlers = $this->config('handlers');
