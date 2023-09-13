@@ -3,22 +3,22 @@
 namespace YouCan\Cereal;
 
 use YouCan\Cereal\Contracts\SerializationHandler;
-use YouCan\Cereal\SerializationHandlers\ScalarTypesSerializationHandler;
 
-class SerializationHandlerFactory implements Contracts\SerializationHandlerFactory
+final class SerializationHandlerFactory implements Contracts\SerializationHandlerFactory
 {
-    private array $handlers = [];
+    private static ?self $instance = null;
 
-    private static ?SerializationHandlerFactory $instance = null;
+    /** @var array<string, SerializationHandler> */
+    private array $handlers = [];
 
     private function __construct()
     {
     }
 
-    public static function getInstance(): SerializationHandlerFactory
+    public static function getInstance(): self
     {
-        if (self::$instance === null) {
-            self::$instance = new SerializationHandlerFactory();
+        if (!self::$instance instanceof self) {
+            self::$instance = new self();
         }
 
         return self::$instance;
@@ -33,15 +33,18 @@ class SerializationHandlerFactory implements Contracts\SerializationHandlerFacto
         return $this->handlers[$type];
     }
 
-    public function addHandler(string $type, SerializationHandler $handler): void
-    {
-        $this->handlers[$type] = $handler;
-    }
-
+    /**
+     * @param array<string, SerializationHandler> $handlers
+     */
     public function addHandlers(array $handlers): void
     {
         foreach ($handlers as $type => $handler) {
             $this->addHandler($type, $handler);
         }
+    }
+
+    public function addHandler(string $type, SerializationHandler $handler): void
+    {
+        $this->handlers[$type] = $handler;
     }
 }
