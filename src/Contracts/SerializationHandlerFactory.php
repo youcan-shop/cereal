@@ -2,10 +2,11 @@
 
 namespace YouCan\Cereal\Contracts;
 
-use ReflectionProperty;
-
 interface SerializationHandlerFactory
 {
-    
-    public function getHandler(ReflectionProperty $property): SerializationHandler;
+    public function getHandler(string $type): SerializationHandler;
+
+    public function addHandler(string $type, SerializationHandler $handler): void;
+
+    public function addHandlers(array $handlers): void;
 }

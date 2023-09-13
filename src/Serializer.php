@@ -5,11 +5,9 @@ namespace YouCan\Cereal;
 use ReflectionClass;
 use ReflectionException;
 use YouCan\Cereal\Contracts\Serializable;
-use YouCan\Cereal\Contracts\SerializationHandlerFactory;
 
 final class Serializer
 {
-    private SerializationHandlerFactory $handlerFactory;
     private Serializable $serializable;
 
     /**
@@ -20,11 +18,7 @@ final class Serializer
      */
     private array $serializations = [];
 
-    public function __construct(
-        SerializationHandlerFactory $handlerFactory,
-        Serializable $serializable
-    ) {
-        $this->handlerFactory = $handlerFactory;
+    public function __construct(Serializable $serializable) {
         $this->serializable = $serializable;
     }
 
@@ -36,7 +30,7 @@ final class Serializer
     {
         $this->serialize();
 
-        return ['handlerFactory', 'serializations', 'serializable'];
+        return ['serializations', 'serializable'];
     }
 
     /**
@@ -48,8 +42,13 @@ final class Serializer
             $property = $this->reflect()
                 ->getProperty($propertyName);
 
-            $this->serializations[$propertyName] = $this->handlerFactory
-                ->getHandler($property)
+            if ($property->getType()->isBuiltin()) {
+                $this->serializations[$propertyName] = $this->serializable->$propertyName;
+                continue;
+            }
+
+            $this->serializations[$propertyName] = $this->getSerializationHandlerFactory()
+                ->getHandler($property->getType()->getName())
                 ->serialize($this->serializable->$propertyName);
         }
     }
@@ -80,11 +79,21 @@ final class Serializer
                 ->reflect()
                 ->getProperty($propertyName);
 
+            if ($property->getType()->isBuiltin()) {
+                $this->serializable->$propertyName = $this->serializations[$propertyName];
+                continue;
+            }
+
             $serialized = $this->serializations[$propertyName];
 
-            $this->serializable->$propertyName = $this->handlerFactory
-                ->getHandler($property)
+            $this->serializable->$propertyName = $this->getSerializationHandlerFactory()
+                ->getHandler($property->getType()->getName())
                 ->deserialize($serialized);
         }
+    }
+
+    public function getSerializationHandlerFactory(): SerializationHandlerFactory
+    {
+        return SerializationHandlerFactory::getInstance();
     }
 }

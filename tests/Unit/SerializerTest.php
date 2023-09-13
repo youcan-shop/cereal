@@ -2,34 +2,39 @@
 
 namespace Tests;
 
-use Tests\Components\SerializationHandlerFactory;
 use YouCan\Cereal\Contracts\Serializable;
-use YouCan\Cereal\Serializer;
+use YouCan\Cereal\SerializeTrait;
 
 it('serializes', function () {
-    class A implements Serializable
+    class User implements Serializable
     {
-        private Serializer $serializer;
-        public string $property = 'hello';
+        use SerializeTrait;
 
-        public function __construct()
+        public string $fullname;
+        public int $age;
+        public float $weight;
+        public bool $isStraight;
+
+        public function __construct(string $fullname, int $age, float $weight, bool $isStraight)
         {
-            $this->serializer = new Serializer(
-                new SerializationHandlerFactory(),
-                $this
-            );
+            $this->fullname = $fullname;
+            $this->age = $age;
+            $this->weight = $weight;
+            $this->isStraight = $isStraight;
         }
 
         public function serializes(): array
         {
-            return ['property'];
-        }
-
-        public function __sleep()
-        {
-            return ['serializer'];
+            return ['fullname', 'age', 'weight', 'isStraight'];
         }
     }
 
-    $a = new A();
+    $user = new User('Aymane', 30, 80.5, true);
+    $serializedUser = serialize($user);
+    $deserializedUser = unserialize($serializedUser);
+
+    expect($deserializedUser->fullname)->toBe($user->fullname);
+    expect($deserializedUser->age)->toBe($user->age);
+    expect($deserializedUser->weight)->toBe($user->weight);
+    expect($deserializedUser->isStraight)->toBe($user->isStraight);
 });
