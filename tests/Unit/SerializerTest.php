@@ -2,10 +2,10 @@
 
 namespace Tests;
 
+use YouCanShop\Cereal\Cereal;
 use YouCanShop\Cereal\Contracts\Serializable;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
 use YouCanShop\Cereal\SerializationHandlerFactory;
-use YouCanShop\Cereal\Cereal;
 
 it('serializes scalar types', function () {
     class User implements Serializable
@@ -77,21 +77,23 @@ it('serializes classes', function () {
         }
 
         /**
+         * @param Serializable $serializable
          * @param Something $value
          *
          * @return string
          */
-        public function serialize($value): string
+        public function serialize(Serializable $serializable, $value): string
         {
             return $value->getId();
         }
 
         /**
+         * @param Serializable $serializable
          * @param string $value
          *
          * @return Something
          */
-        public function deserialize($value): Something
+        public function deserialize(Serializable $serializable, $value): Something
         {
             return $this->lookupTable[$value];
         }
@@ -124,4 +126,81 @@ it('serializes classes', function () {
 
     expect($deserialized->thing->getId())
         ->toEqual($wrapper->thing->getId());
+});
+
+it('respects the serialization order', function () {
+    class Number
+    {
+        public int $value;
+
+        public function __construct(int $value)
+        {
+            $this->value = $value;
+        }
+    }
+
+    class SomeList implements Serializable
+    {
+        use Cereal;
+
+        public Number $first;
+        public Number $second;
+        public Number $third;
+
+        public function __construct(Number $first, Number $second, Number $third)
+        {
+            $this->first = $first;
+            $this->second = $second;
+            $this->third = $third;
+        }
+
+        public function serializes(): array
+        {
+            return ['first', 'second', 'third'];
+        }
+    }
+
+    class Handler implements SerializationHandler
+    {
+        /**
+         * @param Serializable $serializable
+         * @param Number $value
+         *
+         * @return mixed
+         */
+        public function serialize(Serializable $serializable, $value)
+        {
+            return $value->value;
+        }
+
+        /**
+         * @param Serializable $serializable
+         * @param int $value
+         *
+         * @return \Tests\Number
+         */
+        public function deserialize(Serializable $serializable, $value): Number
+        {
+            if ($value === 4) {
+                expect($serializable->first)
+                    ->toBeInstanceOf(Number::class)
+                    ->and($serializable->first->value)
+                    ->toEqual(2);
+            }
+
+            return new Number($value);
+        }
+    }
+
+    SerializationHandlerFactory::getInstance()
+        ->addHandler(Number::class, new Handler);
+
+    $list = new SomeList(
+        new Number(2),
+        new Number(4),
+        new Number(8)
+    );
+
+    $serialized = serialize($list);
+    unserialize($serialized);
 });

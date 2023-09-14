@@ -54,7 +54,9 @@ class User implements Serializable
 The `serializes` method returns an array of the properties that you want to serialize. Then the package will automatically serialize and deserialize the data based on the type
 hinted properties.
 
-> Note: The package will only serialize public properties that are type hinted.
+> **Note** 
+> - The package will only serialize public properties that are type hinted.
+> - The package will serialize properties in the order they are defined in the `serialize` method. 
 
 ### Serialization Handlers
 
@@ -72,7 +74,7 @@ class UserHandler implements SerializationHandler {
         $this->userRepository = $userRepository;
     }
 
-    public function serialize($value): string
+    public function serialize(Serializable $serializable, $value): string
     {
         return $value->getId();
     }
@@ -82,7 +84,7 @@ class UserHandler implements SerializationHandler {
      *
      * @return ?User
      */
-    public function deserialize($value): ?User
+    public function deserialize(Serializable $serializable, $value): ?User
     {
         return $this->userRepository->find($value);
     }

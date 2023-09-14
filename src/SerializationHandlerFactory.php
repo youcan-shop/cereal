@@ -25,6 +25,7 @@ final class SerializationHandlerFactory
         return self::$instance;
     }
 
+    
     public function getHandler(string $type): SerializationHandler
     {
         if (!isset($this->handlers[$type])) {
