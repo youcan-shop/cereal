@@ -16,7 +16,7 @@ class CerealServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $path = realpath(__DIR__ . '/../../config/config.php');
+        $path = realpath(__DIR__ . '/../../config/cereal.php');
         if (!is_string($path)) {
             throw new Exception('could not load default config');
         }
