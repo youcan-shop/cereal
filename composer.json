@@ -6,7 +6,11 @@
     "authors": [
         {
             "name": "Aymane Dara Hlamnach",
-            "email": "dara-@outlook.jp"
+            "email": "aymane.hlamnach@youcan.shop"
+        },
+        {
+            "name": "Younes Rafie",
+            "email": "younes@youcan.shop"
         }
     ],
     "autoload": {
