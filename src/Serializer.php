@@ -53,7 +53,10 @@ final class Serializer
 
             $this->serializations[$propertyName] = $this->getSerializationHandlerFactory()
                 ->getHandler($type->getName())
-                ->serialize($this->serializable->$propertyName);
+                ->serialize(
+                    $this->serializable,
+                    $this->serializable->$propertyName
+                );
         }
     }
 
@@ -98,7 +101,10 @@ final class Serializer
 
             $this->serializable->$propertyName = $this->getSerializationHandlerFactory()
                 ->getHandler($type->getName())
-                ->deserialize($serialized);
+                ->deserialize(
+                    $this->serializable,
+                    $serialized
+                );
         }
     }
 }

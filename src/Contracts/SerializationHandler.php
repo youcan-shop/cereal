@@ -9,12 +9,12 @@ interface SerializationHandler
      *
      * @return mixed
      */
-    public function serialize($value);
+    public function serialize(Serializable $serializable, $value);
 
     /**
      * @param mixed $value
      *
      * @return mixed
      */
-    public function deserialize($value);
+    public function deserialize(Serializable $serializable, $value);
 }
