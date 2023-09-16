@@ -9,7 +9,9 @@ use YouCanShop\Cereal\Contracts\Serializable;
 
 final class Serializer
 {
-    private Serializable $serializable;
+    protected Serializable $serializable;
+
+    protected string $serializationHandlerFactoryClass = SerializationHandlerFactory::class;
 
     /**
      * this array matches property names to serializations
@@ -19,9 +21,12 @@ final class Serializer
      */
     private array $serializations = [];
 
-    public function __construct(Serializable $serializable)
-    {
+    public function __construct(
+        Serializable $serializable,
+        string $serializationHandlerFactoryClass = SerializationHandlerFactory::class
+    ) {
         $this->serializable = $serializable;
+        $this->serializationHandlerFactoryClass = $serializationHandlerFactoryClass;
     }
 
     /**
@@ -70,7 +75,7 @@ final class Serializer
 
     public function getSerializationHandlerFactory(): SerializationHandlerFactory
     {
-        return SerializationHandlerFactory::getInstance();
+        return call_user_func([$this->serializationHandlerFactoryClass, 'getInstance']);
     }
 
     /**
