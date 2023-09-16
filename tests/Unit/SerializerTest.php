@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit;
 
 use YouCanShop\Cereal\Cereal;
 use YouCanShop\Cereal\Contracts\Serializable;
