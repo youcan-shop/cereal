@@ -7,7 +7,8 @@ use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use InvalidArgumentException;
-use YouCanShop\Cereal\SerializationHandlerFactory;
+use YouCanShop\Cereal\SerializationHandlerFactory as BaseSerializationHandlerFactory;
+use YouCanShop\Cereal\Laravel\SerializationHandlerFactory as LaravelSerializationHandlerFactory;
 
 class CerealServiceProvider extends ServiceProvider
 {
@@ -24,11 +25,16 @@ class CerealServiceProvider extends ServiceProvider
         $this->publishes([$path => config_path('cereal.php')]);
         $this->mergeConfigFrom($path, 'cereal');
 
-        $handlerFactory = SerializationHandlerFactory::getInstance();
+        $handlerFactory = LaravelSerializationHandlerFactory::getInstance();
 
         $this->app->bind(
-            SerializationHandlerFactory::class,
-            fn(): SerializationHandlerFactory => $handlerFactory
+            BaseSerializationHandlerFactory::class,
+            fn(): LaravelSerializationHandlerFactory => $handlerFactory
+        );
+
+        $this->app->bind(
+            LaravelSerializationHandlerFactory::class,
+            fn(): LaravelSerializationHandlerFactory => $handlerFactory
         );
 
         $handlers = $this->config('handlers');
