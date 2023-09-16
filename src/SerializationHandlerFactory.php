@@ -5,7 +5,7 @@ namespace YouCanShop\Cereal;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
 use InvalidArgumentException;
 
-final class SerializationHandlerFactory
+class SerializationHandlerFactory
 {
     private static ?self $instance = null;
 
@@ -19,7 +19,7 @@ final class SerializationHandlerFactory
     public static function getInstance(): self
     {
         if (!self::$instance instanceof self) {
-            self::$instance = new self();
+            self::$instance = new static();
         }
 
         return self::$instance;
