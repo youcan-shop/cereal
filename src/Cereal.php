@@ -9,7 +9,7 @@ use YouCanShop\Cereal\Contracts\Serializable;
  */
 trait Cereal
 {
-    private Serializer $serializer;
+    protected Serializer $serializer;
 
     public function __serialize(): array
     {

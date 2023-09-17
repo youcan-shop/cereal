@@ -6,10 +6,14 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use YouCanShop\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\Contracts\SerializationHandlerFactory as SerializationHandlerFactoryContract;
 
 final class Serializer
 {
     private Serializable $serializable;
+
+    /** @var class-string<SerializationHandlerFactoryContract> */
+    private string $factoryClass;
 
     /**
      * this array matches property names to serializations
@@ -19,9 +23,15 @@ final class Serializer
      */
     private array $serializations = [];
 
-    public function __construct(Serializable $serializable)
-    {
+    /**
+     * @param class-string<SerializationHandlerFactoryContract> $factoryClass
+     */
+    public function __construct(
+        Serializable $serializable,
+        string $factoryClass = SerializationHandlerFactory::class
+    ) {
         $this->serializable = $serializable;
+        $this->factoryClass = $factoryClass;
     }
 
     /**
@@ -32,7 +42,11 @@ final class Serializer
     {
         $this->serialize();
 
-        return ['serializations', 'serializable'];
+        return [
+            'serializations',
+            'serializable',
+            'factoryClass',
+        ];
     }
 
     /**
@@ -68,9 +82,9 @@ final class Serializer
         return new ReflectionClass($this->serializable);
     }
 
-    public function getSerializationHandlerFactory(): SerializationHandlerFactory
+    public function getSerializationHandlerFactory(): SerializationHandlerFactoryContract
     {
-        return SerializationHandlerFactory::getInstance();
+        return call_user_func([$this->factoryClass, 'getInstance']);
     }
 
     /**
