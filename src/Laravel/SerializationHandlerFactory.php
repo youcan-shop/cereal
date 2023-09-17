@@ -9,7 +9,7 @@ class SerializationHandlerFactory extends BaseSerializationHandlerFactory
 {
     public function getHandler(string $type): SerializationHandler
     {
-        if (is_subclass_of($type,'Illuminate\Database\Eloquent\Model')) {
+        if (is_subclass_of($type, \Illuminate\Database\Eloquent\Model::class)) {
             return new ModelSerializationHandler();
         }
 

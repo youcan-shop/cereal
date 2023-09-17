@@ -2,23 +2,30 @@
 
 namespace Tests\Unit\Laravel;
 
-use Illuminate\Database\Eloquent\Model;
-use YouCanShop\Cereal\Laravel\Cereal;
-use YouCanShop\Cereal\Contracts\Serializable;
 use Illuminate\Database\Capsule\Manager as Capsule;
-use YouCanShop\Cereal\SerializationHandlerFactory as BaseSerializationHandlerFactory;
+use Illuminate\Database\Eloquent\Model;
+use YouCanShop\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\Laravel\Cereal;
 use YouCanShop\Cereal\Laravel\SerializationHandlerFactory as LaravelSerializationHandlerFactory;
+use YouCanShop\Cereal\SerializationHandlerFactory as BaseSerializationHandlerFactory;
 
 it('serializes eloquent models', function () {
     $capsule = new Capsule;
-    $capsule->addConnection([
-        "driver" => "sqlite",
-        "database" => __DIR__."/db.sqlite"
-    ]);
+
+    $capsule->addConnection(
+        [
+            "driver" => "sqlite",
+            "database" => ':memory:',
+        ]
+    );
+
     $capsule->setAsGlobal();
+
     $capsule->bootEloquent();
+
     $capsule->getContainer()->singleton(
-        BaseSerializationHandlerFactory::class, fn() => LaravelSerializationHandlerFactory::getInstance()
+        BaseSerializationHandlerFactory::class,
+        fn() => LaravelSerializationHandlerFactory::getInstance()
     );
 
     if (Capsule::schema()->hasTable('users') === false) {
@@ -30,7 +37,9 @@ it('serializes eloquent models', function () {
         Capsule::table('users')->truncate();
     }
 
-    class MModel extends Model {}
+    class MModel extends Model
+    {
+    }
 
     /**
      * @property int $id
@@ -38,12 +47,15 @@ it('serializes eloquent models', function () {
      */
     class User extends MModel
     {
+        /** @var string[] */
         protected $guarded = [];
         public $timestamps = false;
     }
+
     User::query()->create(['full_name' => 'Aymane']);
 
-    class WelcomeEmail implements Serializable {
+    class WelcomeEmail implements Serializable
+    {
         use Cereal;
 
         public User $user;

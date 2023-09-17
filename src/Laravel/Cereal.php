@@ -13,7 +13,10 @@ trait Cereal
     {
         /** @var Serializable $this */
         return [
-            $this->getSerializerPropertyName() => new Serializer($this, SerializationHandlerFactory::class),
+            $this->getSerializerPropertyName() => new Serializer(
+                $this,
+                SerializationHandlerFactory::class
+            ),
         ];
     }
 }

@@ -177,7 +177,7 @@ it('respects the serialization order', function () {
          * @param Serializable $serializable
          * @param int $value
          *
-         * @return \Tests\Number
+         * @return Number
          */
         public function deserialize(Serializable $serializable, $value): Number
         {
