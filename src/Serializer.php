@@ -59,14 +59,12 @@ final class Serializer
                 ->getProperty($propertyName)
                 ->getType();
 
-            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
-                $this->serializations[$propertyName] = $this->serializable->$propertyName;
-
-                continue;
-            }
+            $typeName = $type instanceof ReflectionNamedType
+                ? $type->getName()
+                : '__implicit';
 
             $this->serializations[$propertyName] = $this->getSerializationHandlerFactory()
-                ->getHandler($type->getName())
+                ->getHandler($typeName)
                 ->serialize(
                     $this->serializable,
                     $this->serializable->$propertyName
@@ -106,15 +104,14 @@ final class Serializer
                 ->getProperty($propertyName)
                 ->getType();
 
-            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
-                $this->serializable->$propertyName = $this->serializations[$propertyName];
-                continue;
-            }
+            $typeName = $type instanceof ReflectionNamedType
+                ? $type->getName()
+                : '__implicit';
 
             $serialized = $this->serializations[$propertyName];
 
             $this->serializable->$propertyName = $this->getSerializationHandlerFactory()
-                ->getHandler($type->getName())
+                ->getHandler($typeName)
                 ->deserialize(
                     $this->serializable,
                     $serialized

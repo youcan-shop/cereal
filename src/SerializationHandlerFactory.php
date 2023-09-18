@@ -2,7 +2,6 @@
 
 namespace YouCanShop\Cereal;
 
-use InvalidArgumentException;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
 
 /** @phpstan-consistent-constructor */
@@ -29,7 +28,7 @@ class SerializationHandlerFactory implements Contracts\SerializationHandlerFacto
     public function getHandler(string $type): SerializationHandler
     {
         if (!isset($this->handlers[$type])) {
-            throw new InvalidArgumentException(sprintf('cannot find handler for type "%s"', $type));
+            return new DefaultSerializationHandler();
         }
 
         return $this->handlers[$type];
