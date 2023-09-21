@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use Tests\Helpers\Cloner;
+use Tests\Helpers\SomethingHandler;
 use YouCanShop\Cereal\Cereal;
 use YouCanShop\Cereal\Contracts\Serializable;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
@@ -203,4 +205,28 @@ it('respects the serialization order', function () {
 
     $serialized = serialize($list);
     unserialize($serialized);
+});
+
+it('keeps the same serializable reference', function () {
+    $table = [
+        'one' => new \Tests\Helpers\Something('one'),
+        'two'  => new \Tests\Helpers\Something('two'),
+    ];
+
+    SerializationHandlerFactory::getInstance()
+        ->addHandler(
+            \Tests\Helpers\Something::class,
+            new SomethingHandler($table)
+        );
+
+    $wrapper = new \Tests\Helpers\Wrapper(reset($table));
+
+    $cloner = new Cloner([$wrapper]);
+
+    $serialized = serialize(clone $cloner);
+
+    $deserialized = unserialize($serialized);
+
+    expect($deserialized->data[0]->something)
+        ->toBeInstanceOf(\Tests\Helpers\Something::class);
 });
