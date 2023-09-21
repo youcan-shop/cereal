@@ -210,7 +210,7 @@ it('respects the serialization order', function () {
 it('keeps the same serializable reference', function () {
     $table = [
         'one' => new \Tests\Helpers\Something('one'),
-        'two'  => new \Tests\Helpers\Something('two'),
+        'two' => new \Tests\Helpers\Something('two'),
     ];
 
     SerializationHandlerFactory::getInstance()
@@ -227,6 +227,22 @@ it('keeps the same serializable reference', function () {
 
     $deserialized = unserialize($serialized);
 
-    expect($deserialized->data[0]->something)
-        ->toBeInstanceOf(\Tests\Helpers\Something::class);
+    $wrapper = $deserialized->data[0];
+
+    $srProp = (new \ReflectionObject($wrapper))
+        ->getProperty('serializer');
+
+    $srProp->setAccessible(true);
+    $serializer = $srProp->getValue($wrapper);
+
+    $sbProp = (new \ReflectionObject($serializer))
+        ->getProperty('serializable');
+
+    $sbProp->setAccessible(true);
+    $serializable = $sbProp->getValue($serializer);
+
+    expect($wrapper->something)
+        ->toBeInstanceOf(\Tests\Helpers\Something::class)
+        ->and(spl_object_id($wrapper))
+        ->toEqual(spl_object_id($serializable));
 });
