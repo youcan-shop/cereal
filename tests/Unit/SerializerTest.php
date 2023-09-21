@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use Tests\Helpers\Cloner;
+use Tests\Helpers\SomethingHandler;
 use YouCanShop\Cereal\Cereal;
 use YouCanShop\Cereal\Contracts\Serializable;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
@@ -203,4 +205,44 @@ it('respects the serialization order', function () {
 
     $serialized = serialize($list);
     unserialize($serialized);
+});
+
+it('keeps the same serializable reference', function () {
+    $table = [
+        'one' => new \Tests\Helpers\Something('one'),
+        'two' => new \Tests\Helpers\Something('two'),
+    ];
+
+    SerializationHandlerFactory::getInstance()
+        ->addHandler(
+            \Tests\Helpers\Something::class,
+            new SomethingHandler($table)
+        );
+
+    $wrapper = new \Tests\Helpers\Wrapper(reset($table));
+
+    $cloner = new Cloner([$wrapper]);
+
+    $serialized = serialize(clone $cloner);
+
+    $deserialized = unserialize($serialized);
+
+    $wrapper = $deserialized->data[0];
+
+    $srProp = (new \ReflectionObject($wrapper))
+        ->getProperty('serializer');
+
+    $srProp->setAccessible(true);
+    $serializer = $srProp->getValue($wrapper);
+
+    $sbProp = (new \ReflectionObject($serializer))
+        ->getProperty('serializable');
+
+    $sbProp->setAccessible(true);
+    $serializable = $sbProp->getValue($serializer);
+
+    expect($wrapper->something)
+        ->toBeInstanceOf(\Tests\Helpers\Something::class)
+        ->and(spl_object_id($wrapper))
+        ->toEqual(spl_object_id($serializable));
 });

@@ -10,6 +10,7 @@ use YouCanShop\Cereal\Contracts\Serializable;
 trait Cereal
 {
     protected Serializer $serializer;
+    private self $instance;
 
     public function __serialize(): array
     {
@@ -23,5 +24,10 @@ trait Cereal
     public function getSerializerPropertyName(): string
     {
         return 'serializer';
+    }
+
+    public function __clone()
+    {
+        $this->instance = $this;
     }
 }
