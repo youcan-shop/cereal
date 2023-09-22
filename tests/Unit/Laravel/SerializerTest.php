@@ -105,6 +105,7 @@ it('serializes collections', function () {
     /** @var CollectionWrapper $u */
     $u = unserialize($s);
 
-    expect($u->things)->every(fn(Something $t) => $t->isProcessed())
+    expect($u->things)
+        ->every(fn(Something $t) => $t->isProcessed())
         ->toBeTrue();
 });
