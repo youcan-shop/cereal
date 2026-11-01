@@ -2,6 +2,8 @@
 
 namespace YouCanShop\Cereal;
 
+use ArrayAccess;
+use Traversable;
 use YouCanShop\Cereal\Contracts\SerializationHandler;
 
 /** @phpstan-consistent-constructor */
@@ -27,11 +29,15 @@ class SerializationHandlerFactory implements Contracts\SerializationHandlerFacto
 
     public function getHandler(string $type): SerializationHandler
     {
-        if (!isset($this->handlers[$type])) {
-            return new DefaultSerializationHandler();
+        if (isset($this->handlers[$type])) {
+            return $this->handlers[$type];
         }
 
-        return $this->handlers[$type];
+        if (is_a($type, ArrayAccess::class, true) && is_a($type, Traversable::class, true)) {
+            return new IterableSerializationHandler($this);
+        }
+
+        return new DefaultSerializationHandler();
     }
 
     /**

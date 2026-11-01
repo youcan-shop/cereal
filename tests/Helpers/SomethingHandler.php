@@ -37,6 +37,6 @@ class SomethingHandler implements SerializationHandler
      */
     public function deserialize(Serializable $serializable, $value): Something
     {
-        return $this->table[$value];
+        return $this->table[$value]->setProcessed(true);
     }
 }
