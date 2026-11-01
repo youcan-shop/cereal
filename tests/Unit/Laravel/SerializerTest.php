@@ -8,6 +8,7 @@ use Tests\Helpers\CollectionWrapper;
 use Tests\Helpers\Something;
 use Tests\Helpers\SomethingHandler;
 use YouCanShop\Cereal\Contracts\Serializable;
+use YouCanShop\Cereal\IterableSerializationHandler;
 use YouCanShop\Cereal\Laravel\Cereal;
 use YouCanShop\Cereal\Laravel\SerializationHandlerFactory as LaravelSerializationHandlerFactory;
 use YouCanShop\Cereal\SerializationHandlerFactory;
@@ -108,4 +109,35 @@ it('serializes collections', function () {
     expect($u->things)
         ->every(fn(Something $t) => $t->isProcessed())
         ->toBeTrue();
+});
+
+it('serializes nested collections', function () {
+    $table = [
+        'one' => new Something('one'),
+        'two' => new Something('two'),
+    ];
+
+    SerializationHandlerFactory::getInstance()
+        ->addHandler(
+            Something::class,
+            new SomethingHandler($table)
+        );
+
+    $wrapper = new CollectionWrapper(collect(['nested' => collect($table)]));
+
+    /** @var CollectionWrapper $u */
+    $u = unserialize(serialize($wrapper));
+
+    expect($u->things->get('nested'))
+        ->every(fn(Something $t) => $t->isProcessed())
+        ->toBeTrue();
+});
+
+it('reads a collection serialized before item handlers', function () {
+    $wrapper = new CollectionWrapper(collect());
+
+    $handler = new IterableSerializationHandler(SerializationHandlerFactory::getInstance());
+
+    expect($handler->deserialize($wrapper, serialize(collect(['a' => 1]))))
+        ->toEqual(collect(['a' => 1]));
 });
