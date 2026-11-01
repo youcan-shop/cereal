@@ -99,6 +99,10 @@ final class Serializer
     public function deserialize(): void
     {
         foreach ($this->serializable->serializes() as $propertyName) {
+            if (!array_key_exists($propertyName, $this->serializations)) {
+                continue;
+            }
+
             $type = $this
                 ->reflect()
                 ->getProperty($propertyName)
