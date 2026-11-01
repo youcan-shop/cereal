@@ -246,3 +246,36 @@ it('keeps the same serializable reference', function () {
         ->and(spl_object_id($wrapper))
         ->toEqual(spl_object_id($serializable));
 });
+
+it('keeps the default of a property added after serialization', function () {
+    class Versioned implements Serializable
+    {
+        use Cereal;
+
+        /** @var string[] */
+        public static array $fields = ['name'];
+
+        public string $name;
+        public ?string $added = null;
+
+        public function __construct(string $name, ?string $added = null)
+        {
+            $this->name = $name;
+            $this->added = $added;
+        }
+
+        public function serializes(): array
+        {
+            return self::$fields;
+        }
+    }
+
+    $versioned = new Versioned('Ada', 'set');
+    $serialized = serialize($versioned);
+
+    Versioned::$fields = ['name', 'added'];
+    $deserialized = unserialize($serialized);
+
+    expect($deserialized->name)->toBe('Ada');
+    expect($deserialized->added)->toBeNull();
+});
